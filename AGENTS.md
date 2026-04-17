@@ -17,6 +17,11 @@
   - `cp .env.example .env`
 - Health check:
   - `curl http://127.0.0.1:3000/health`
+- Web panel:
+  - `http://127.0.0.1:3000/panel`
+- Queue checks:
+  - `curl http://127.0.0.1:3000/api/task/queue`
+  - `curl http://127.0.0.1:3000/api/task/history`
 
 ## Docker Workflow
 - Local build/run:
@@ -56,6 +61,14 @@ When adding or changing API routes:
 2. Prefer JSON output
 3. Add or update tests
 4. Add example request in `README.local.md`
+
+## Task Queue Rule
+When changing task orchestration:
+- keep the in-memory queue mock-friendly and local-first
+- preserve priority behavior where lower numbers run first
+- preserve retry behavior controlled by `QUEUE_MAX_RETRIES` or request `maxRetries`
+- keep task lifecycle visible through `/api/task/queue`, `/api/task/history`, and `/api/task/:taskId`
+- update `logs/tasks.log` behavior only through the logger/service layer
 
 ## Adapter Rule
 For any fingerprint browser / VPS / OpenClaw integration:
