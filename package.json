@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "start": "node src/server.js",
-    "test": "node --test"
+    "test": "node --test",
+    "check:env": "node scripts/check-env-example.mjs"
   },
   "engines": {
     "node": ">=20"

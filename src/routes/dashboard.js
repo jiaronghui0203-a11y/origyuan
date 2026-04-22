@@ -1,10 +1,15 @@
 import express from "express";
 
-export function createDashboardRoutes(queueService) {
+export function createDashboardRoutes(queueService, controlPlaneService) {
   const router = express.Router();
 
-  router.get("/", (req, res) => {
+  router.get("/", async (req, res) => {
     const status = queueService.getStatus();
+    const [topology, providers, models] = await Promise.all([
+      controlPlaneService.getTopologyStatus(),
+      controlPlaneService.getProvidersStatus(),
+      controlPlaneService.getApprovedModels()
+    ]);
     const rows = status.recentHistory.map((task) => `
       <tr>
         <td><a href="/panel/tasks/${escapeHtml(task.id)}">${escapeHtml(task.id)}</a></td>
@@ -15,6 +20,30 @@ export function createDashboardRoutes(queueService) {
         <td>${escapeHtml(task.updatedAt)}</td>
       </tr>
     `).join("");
+    const providerRows = Object.values(providers.data.providers).map((provider) => `
+      <tr>
+        <td>${escapeHtml(provider.label)}</td>
+        <td>${escapeHtml(provider.role)}</td>
+        <td>${renderBadge(provider.ok ? "healthy" : provider.configured ? "degraded" : "inactive")}</td>
+        <td>${provider.latencyMs == null ? "-" : `${provider.latencyMs} ms`}</td>
+        <td>${escapeHtml(provider.checkedUrl || provider.baseUrl || "-")}</td>
+        <td>${escapeHtml(provider.summary)}</td>
+      </tr>
+    `).join("");
+    const modelRows = models.data.models.map((model) => `
+      <tr>
+        <td><code>${escapeHtml(model.id)}</code></td>
+        <td>${renderBadge(model.available ? "available" : "missing")}</td>
+      </tr>
+    `).join("");
+    const topologyRows = Object.entries(topology.data.nodes).map(([key, node]) => `
+      <tr>
+        <td>${escapeHtml(key)}</td>
+        <td>${escapeHtml(node.role)}</td>
+        <td>${renderBadge(node.ok === undefined ? "planned" : node.ok ? "healthy" : node.configured ? "degraded" : "inactive")}</td>
+        <td>${escapeHtml(node.hostname || node.baseUrl || node.owner || "-")}</td>
+      </tr>
+    `).join("");
 
     res.type("html").send(`<!doctype html>
 <html lang="zh-CN">
@@ -23,50 +52,83 @@ export function createDashboardRoutes(queueService) {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Origyuan Local Control Panel</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 24px; background: #f7f7f8; color: #1f2328; }
-    main { max-width: 1080px; margin: 0 auto; }
+    body { font-family: Arial, sans-serif; margin: 24px; background: #f4f7fb; color: #1f2328; }
+    main { max-width: 1200px; margin: 0 auto; }
     section { background: white; border: 1px solid #d8dee4; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
     label { display: block; margin: 10px 0 4px; font-weight: 600; }
     input, select, textarea { width: 100%; box-sizing: border-box; padding: 8px; border: 1px solid #d0d7de; border-radius: 6px; }
     button { margin-top: 12px; padding: 9px 14px; border: 0; border-radius: 6px; background: #1f883d; color: white; cursor: pointer; }
     table { width: 100%; border-collapse: collapse; }
     th, td { border-bottom: 1px solid #d8dee4; padding: 8px; text-align: left; font-size: 13px; }
     code { background: #eef1f4; padding: 2px 4px; border-radius: 4px; }
+    .badge { display: inline-block; border-radius: 999px; padding: 2px 8px; font-size: 12px; font-weight: 700; }
+    .badge.healthy, .badge.available { background: #dafbe1; color: #116329; }
+    .badge.degraded, .badge.missing { background: #fff8c5; color: #9a6700; }
+    .badge.inactive, .badge.planned { background: #eaeef2; color: #57606a; }
   </style>
 </head>
 <body>
   <main>
     <h1>Origyuan Local Control Panel</h1>
     <section>
-      <h2>Queue Status</h2>
-      <p>Running: <code>${status.running}</code></p>
-      <p>Pending: <code>${status.pendingCount}</code></p>
-      <p>History: <code>${status.historyCount}</code></p>
+      <h2>Control Plane Summary</h2>
+      <p>Mode: <code>${escapeHtml(topology.data.mode)}</code></p>
+      <p>Chain: <code>${escapeHtml(topology.data.chain.join(" -> "))}</code></p>
+      <p>Cloudflare API Hostname: <code>${escapeHtml(topology.data.cloudflare.apiHostname || "not configured")}</code></p>
+      <p>Queue Running/Pending/History: <code>${status.running}</code> / <code>${status.pendingCount}</code> / <code>${status.historyCount}</code></p>
     </section>
+    <div class="grid">
+      <section>
+        <h2>Topology</h2>
+        <table>
+          <thead><tr><th>Node</th><th>Role</th><th>Status</th><th>Endpoint</th></tr></thead>
+          <tbody>${topologyRows}</tbody>
+        </table>
+      </section>
+      <section>
+        <h2>Approved Northbound Models</h2>
+        <p>Primary: <code>north/team/gpt-5-codex</code></p>
+        <p>Fallbacks: <code>north/team/claude-sonnet</code>, <code>north/backup/payg</code></p>
+        <table>
+          <thead><tr><th>Alias</th><th>Status</th></tr></thead>
+          <tbody>${modelRows}</tbody>
+        </table>
+      </section>
+    </div>
     <section>
-      <h2>Manual Mock Task</h2>
-      <form method="post" action="/panel/tasks">
-        <label>Type</label>
-        <select name="type">
-          <option value="browser">browser</option>
-          <option value="vps">vps</option>
-          <option value="openclaw">openclaw</option>
-          <option value="fail">fail</option>
-        </select>
-        <label>Priority</label>
-        <input name="priority" value="5">
-        <label>Command / Task Payload</label>
-        <textarea name="value" rows="4">echo local mock task</textarea>
-        <button type="submit">Run Mock Task</button>
-      </form>
-    </section>
-    <section>
-      <h2>Recent Task History</h2>
+      <h2>Provider Health & Latency</h2>
       <table>
-        <thead><tr><th>ID</th><th>Type</th><th>Priority</th><th>Attempts</th><th>Status</th><th>Updated</th></tr></thead>
-        <tbody>${rows || "<tr><td colspan=\"6\">No task history yet.</td></tr>"}</tbody>
+        <thead><tr><th>Provider</th><th>Role</th><th>Status</th><th>Latency</th><th>Checked URL</th><th>Summary</th></tr></thead>
+        <tbody>${providerRows}</tbody>
       </table>
     </section>
+    <div class="grid">
+      <section>
+        <h2>Manual Mock Task</h2>
+        <form method="post" action="/panel/tasks">
+          <label>Type</label>
+          <select name="type">
+            <option value="browser">browser</option>
+            <option value="vps">vps</option>
+            <option value="openclaw">openclaw</option>
+            <option value="fail">fail</option>
+          </select>
+          <label>Priority</label>
+          <input name="priority" value="5">
+          <label>Command / Task Payload</label>
+          <textarea name="value" rows="4">echo local mock task</textarea>
+          <button type="submit">Run Mock Task</button>
+        </form>
+      </section>
+      <section>
+        <h2>Recent Task History</h2>
+        <table>
+          <thead><tr><th>ID</th><th>Type</th><th>Priority</th><th>Attempts</th><th>Status</th><th>Updated</th></tr></thead>
+          <tbody>${rows || "<tr><td colspan=\"6\">No task history yet.</td></tr>"}</tbody>
+        </table>
+      </section>
+    </div>
   </main>
 </body>
 </html>`);
@@ -149,4 +211,8 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
+}
+
+function renderBadge(status) {
+  return `<span class="badge ${escapeHtml(status)}">${escapeHtml(status)}</span>`;
 }

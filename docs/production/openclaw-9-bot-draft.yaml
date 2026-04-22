@@ -1,0 +1,301 @@
+# Planning schema only.
+# This file freezes the target production topology and role boundaries.
+# It is not a direct OpenClaw or Paperclip runtime config.
+
+meta:
+  name: origyuan-openclaw-paperclip-hermes-9-bot-draft
+  version: 0.1.0
+  status: draft
+  updated_at: 2026-04-22
+
+principles:
+  orchestration_layers:
+    - OpenClaw is the only external entrypoint, session source of truth, and execution approval entry.
+    - Paperclip is the only task source of truth for tickets, heartbeat, budget, approvals, and org orchestration.
+    - Hermes is the hidden cognition backend for long tasks, research, and knowledge distillation only.
+  exclusions:
+    - CrewAI is removed from the production chain and kept for offline experiments only.
+  channels:
+    - Feishu is the primary work surface.
+    - Telegram is the alert and mobile approval surface.
+  exposure:
+    - Only hongwu and xiaoyuan are allowed to speak externally.
+    - The other seven bots stay internal-only specialist roles.
+
+deployment_boundary:
+  openclaw_gateway:
+    location: cloud_vps
+    exposure: public
+    purpose:
+      - Feishu ingress and egress
+      - Telegram ingress and egress
+  paperclip:
+    location: private_network_or_tailscale_only
+    exposure: private_only
+  hermes:
+    location: same_linux_vps_or_same_private_linux_network_as_paperclip
+    exposure: private_only
+  stage_one_constraints:
+    - Do not place Paperclip or Hermes on Windows plus WSL2 in phase one.
+
+shared_artifacts:
+  root_dir: /root/.openclaw/workspace-shared/runs/<ticket-id>/
+  required_ids:
+    - channel_message_id
+    - paperclip_issue_id
+    - run_id
+    - artifact_path
+
+model_slots:
+  m1_reasoning: chongzhen/gpt-5.4
+  m2_execution: openai-codex/gpt-5.4
+  m3_creative: claude-4.6-verified-alias
+  policy:
+    - Freeze slot mapping first.
+    - Do not introduce extra fallback layers before the migration is stable.
+
+bots:
+  - agent_id: hongwu
+    display_name: 洪武
+    runtime: OpenClaw
+    external: true
+    role: 总路由官 / 总PM / 分单 / 汇总回传
+    primary_model_slot: m1_reasoning
+    backup_model_slot: m2_execution
+    permissions:
+      - channel.read
+      - channel.write
+      - paperclip.issue.create
+      - paperclip.issue.assign
+      - paperclip.issue.comment
+      - agent.invoke
+      - budget.read
+    heartbeat:
+      enabled: true
+      interval: 3m
+      schedule: 09:00-23:00
+      triggers:
+        - message_event
+  - agent_id: xiaoyuan
+    display_name: 小元
+    runtime: OpenClaw
+    external: true
+    role: Telegram 副路由 / 审批 / 告警 / 状态回传
+    primary_model_slot: m1_reasoning
+    backup_model_slot: m2_execution
+    permissions:
+      - channel.read
+      - channel.write
+      - status.read
+      - approval.request
+      - incident.broadcast
+    heartbeat:
+      enabled: true
+      interval: 5m
+      schedule: all_day
+      triggers:
+        - message_event
+  - agent_id: jiajing
+    display_name: 嘉靖
+    runtime: OpenClaw
+    external: false
+    role: 销售 / 商务 / 客户推进
+    primary_model_slot: m3_creative
+    backup_model_slot: m1_reasoning
+    permissions:
+      - web
+      - docs
+      - crm-draft
+      - proposal-draft
+    heartbeat:
+      enabled: false
+      mode: on_demand
+  - agent_id: tianqi
+    display_name: 天启
+    runtime: OpenClaw
+    external: false
+    role: 前端 / 页面 / 原型 / 交互实现
+    primary_model_slot: m2_execution
+    backup_model_slot: m1_reasoning
+    permissions:
+      - code.write
+      - browser
+      - local.test
+      - preview
+    heartbeat:
+      enabled: false
+      mode: on_demand
+  - agent_id: wanli
+    display_name: 万历
+    runtime: OpenClaw
+    external: false
+    role: 财务 / 预算 / 报价 / 成本守门
+    primary_model_slot: m1_reasoning
+    backup_model_slot: m2_execution
+    permissions:
+      - budget.read
+      - quote.draft
+      - cost.review
+      - approval.suggest
+    heartbeat:
+      enabled: true
+      schedule:
+        - 09:30
+        - 14:30
+      triggers:
+        - budget_alert
+  - agent_id: chenghua
+    display_name: 成化
+    runtime: OpenClaw
+    external: false
+    role: 数仓 / BI / ETL / 数据监控
+    primary_model_slot: m1_reasoning
+    backup_model_slot: m2_execution
+    permissions:
+      - sql.read
+      - etl.dryrun
+      - dashboard
+      - trendradar.query
+    heartbeat:
+      enabled: true
+      interval: 20m
+  - agent_id: yongle
+    display_name: 永乐
+    runtime: OpenClaw
+    external: false
+    role: 文案 / 文档 / 知识库 / SOP
+    primary_model_slot: m3_creative
+    backup_model_slot: m1_reasoning
+    permissions:
+      - docs.write
+      - kb.write
+      - feishu.doc.draft
+      - summary
+    heartbeat:
+      enabled: true
+      schedule:
+        - 10:00
+        - 17:30
+  - agent_id: chongzhen
+    display_name: 崇祯
+    runtime: OpenClaw
+    external: false
+    role: 运维 / SRE / 故障处置 / 云端执行
+    primary_model_slot: m2_execution
+    backup_model_slot: m1_reasoning
+    permissions:
+      - shell
+      - ssh
+      - logs
+      - service.restart
+      - browser.debug
+    heartbeat:
+      enabled: true
+      mode: incident_only
+      interval: 5m
+  - agent_id: xuande
+    display_name: 宣德
+    runtime: OpenClaw
+    external: false
+    role: 视觉 / 品牌 / 海报 / 风格设定
+    primary_model_slot: m3_creative
+    backup_model_slot: m1_reasoning
+    permissions:
+      - design.brief
+      - image.prompt
+      - asset.review
+      - styleguide
+    heartbeat:
+      enabled: false
+      mode: on_demand
+
+channel_routes:
+  feishu:
+    primary_router: hongwu
+    default_targets:
+      - daily_work_groups
+      - owner_private_chat
+  telegram:
+    secondary_router: xiaoyuan
+    default_targets:
+      - owner_private_chat
+      - alert_group
+  execution_return:
+    rule: reply_to_origin_channel
+    long_report:
+      feishu: doc_link_plus_summary
+      telegram: summary_plus_key_conclusions_plus_link
+    failure_timeout_budget_exhausted:
+      feishu: leave_audit_trace_in_group
+      telegram: notify_owner_directly
+
+execution_flow:
+  ingress:
+    - User sends from Feishu or Telegram.
+    - Hongwu triages work from Feishu.
+    - Xiaoyuan only handles Telegram alerting, approvals, nudges, and status return.
+  routing_rules:
+    - Single bot or single tool tasks may dispatch directly.
+    - Multi-step, cross-bot, or long-running tasks must open a Paperclip issue.
+  orchestration:
+    - Hermes COO decomposes tasks.
+    - Hermes Research enriches evidence, context, skills, and long context.
+    - OpenClaw specialist bots execute.
+    - Hongwu owns unified QA and final synthesis.
+  approval:
+    - High-risk actions require Xiaoyuan to start approval.
+    - Execution continues only after explicit owner confirmation.
+
+permission_gates:
+  external_speaking:
+    allowed_agents:
+      - hongwu
+      - xiaoyuan
+  high_risk_only:
+    allowed_agent: chongzhen
+    gated_permissions:
+      - shell
+      - ssh
+      - service.restart
+      - file.delete
+      - rollback
+    conditions:
+      - source task carries approval flag
+      - approval is initiated by xiaoyuan
+      - final result is written back to hongwu
+  defaults:
+    - No production changes by default.
+    - No batch destructive edits by default.
+    - No direct external group posting from specialist bots.
+
+heartbeat_policy:
+  enabled_by_default:
+    - hongwu
+    - xiaoyuan
+    - wanli
+    - chenghua
+    - yongle
+    - chongzhen
+  on_demand_only:
+    - jiajing
+    - tianqi
+    - xuande
+
+implementation_order:
+  - Freeze the existing seven bot model mapping before persona edits.
+  - Export current truth with openclaw models status --agent <id> --json.
+  - Keep the existing Feishu route unchanged.
+  - Add Telegram incrementally only.
+  - Deploy Paperclip >= 2026.410.0 in a private network only.
+  - Attach the existing seven OpenClaw bots through the Paperclip openclaw_gateway adapter.
+  - Install Hermes Agent and run hermes claw migrate --dry-run first.
+  - Install hermes-paperclip-adapter and add only two Hermes staff bots first.
+  - Bring hongwu and xiaoyuan online.
+  - Restrict channel speaking rights to hongwu and xiaoyuan only.
+
+acceptance_chains:
+  - feishu_to_hongwu_to_single_bot_to_feishu
+  - feishu_to_hongwu_to_paperclip_to_hermes_coo_to_openclaw_to_feishu
+  - telegram_to_xiaoyuan_to_telegram
+  - high_risk_task_to_xiaoyuan_approval_to_owner_confirm_to_execute
+  - long_report_to_feishu_doc_or_telegram_summary

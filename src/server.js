@@ -8,8 +8,11 @@ import { getConfig } from "./config.js";
 import { createBrowserRoutes } from "./routes/browser.js";
 import { createDashboardRoutes } from "./routes/dashboard.js";
 import { createOpenClawRoutes } from "./routes/openclaw.js";
+import { createProviderRoutes } from "./routes/providers.js";
 import { createTaskRoutes } from "./routes/task.js";
+import { createTopologyRoutes } from "./routes/topology.js";
 import { createVpsRoutes } from "./routes/vps.js";
+import { createControlPlaneService } from "./services/controlPlaneService.js";
 import { createQueueService } from "./services/queueService.js";
 import { createTaskService } from "./services/taskService.js";
 import { createLogger } from "./utils/logger.js";
@@ -20,9 +23,10 @@ const config = getConfig();
 export function createApp(appConfig = config) {
   const app = express();
   const logger = createLogger(appConfig);
+  const controlPlaneService = createControlPlaneService(appConfig, logger);
   const browserAdapter = createFingerprintBrowserAdapter(appConfig);
   const vpsAdapter = createVpsAdapter(appConfig);
-  const openclawAdapter = createOpenClawAdapter(appConfig);
+  const openclawAdapter = createOpenClawAdapter(appConfig, controlPlaneService);
   const taskService = createTaskService({ browserAdapter, vpsAdapter, openclawAdapter });
   const queueService = createQueueService({
     taskService,
@@ -55,8 +59,10 @@ export function createApp(appConfig = config) {
   app.use("/api/browser", createBrowserRoutes(browserAdapter));
   app.use("/api/vps", createVpsRoutes(vpsAdapter));
   app.use("/api/openclaw", createOpenClawRoutes(openclawAdapter));
+  app.use("/api/providers", createProviderRoutes(controlPlaneService));
+  app.use("/api/topology", createTopologyRoutes(controlPlaneService));
   app.use("/api/task", createTaskRoutes(taskService, queueService));
-  app.use("/panel", createDashboardRoutes(queueService));
+  app.use("/panel", createDashboardRoutes(queueService, controlPlaneService));
 
   app.use((req, res) => {
     res.status(404).json(buildResponse({

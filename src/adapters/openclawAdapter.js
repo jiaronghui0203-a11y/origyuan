@@ -1,8 +1,12 @@
 import { buildResponse } from "../utils/response.js";
 
-export function createOpenClawAdapter(config) {
+export function createOpenClawAdapter(config, controlPlaneService) {
   return {
     async getStatus() {
+      if (controlPlaneService) {
+        return controlPlaneService.getOpenClawStatus();
+      }
+
       return buildResponse({
         source: "openclaw",
         message: "OpenClaw adapter is running in mock mode.",
@@ -18,11 +22,12 @@ export function createOpenClawAdapter(config) {
     async dispatch(taskName, payload = {}) {
       return buildResponse({
         source: "openclaw",
-        message: "Mock OpenClaw task dispatched.",
+        message: "Dry-run OpenClaw task prepared. No real production dispatch was executed.",
         data: {
           taskName,
           payload,
-          dispatchId: `mock-openclaw-${Date.now()}`
+          dispatchId: `mock-openclaw-${Date.now()}`,
+          mode: config.taskMode
         }
       });
     }
