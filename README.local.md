@@ -45,6 +45,17 @@ npm test
 powershell -ExecutionPolicy Bypass -File scripts/phase1-vps-audit.ps1
 ```
 
+CC Switch Codex OAuth 账号池同步：
+
+```bash
+node scripts/sync-cc-switch-codex-providers.mjs --prune
+```
+
+- 读取 `C:\Users\13492\.cc-switch\codex_oauth_auth.json`
+- 重建 `C:\Users\13492\.cc-switch\cc-switch.db` 中的 `codex` provider 列表
+- 使用 `cc-switch` 源码兼容的 `meta.authBinding` 结构
+- 默认把全部账号加入 failover queue
+
 ## Docker 本地运行
 
 ```bash
