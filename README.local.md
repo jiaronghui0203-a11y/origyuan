@@ -39,6 +39,12 @@ curl http://127.0.0.1:3000/api/openclaw/status
 npm test
 ```
 
+远端 Phase 1 审计：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/phase1-vps-audit.ps1
+```
+
 ## Docker 本地运行
 
 ```bash
@@ -110,6 +116,7 @@ docker compose down
 - [docs/production/paperclip-hermes-minimal-rollout.md](/C:/Users/13492/Documents/GitHub/origyuan/docs/production/paperclip-hermes-minimal-rollout.md)
 - [docs/production/phase1-control-plane-mvp.md](/C:/Users/13492/Documents/GitHub/origyuan/docs/production/phase1-control-plane-mvp.md)
 - [docs/production/cloudflare-edge-phase1.md](/C:/Users/13492/Documents/GitHub/origyuan/docs/production/cloudflare-edge-phase1.md)
+- [docs/production/phase1-rollout-status-2026-04-22.md](/C:/Users/13492/Documents/GitHub/origyuan/docs/production/phase1-rollout-status-2026-04-22.md)
 - [docs/production/openclaw-northbound.template.json](/C:/Users/13492/Documents/GitHub/origyuan/docs/production/openclaw-northbound.template.json)
 
 ## 任务队列
