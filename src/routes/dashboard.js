@@ -78,6 +78,8 @@ export function createDashboardRoutes(queueService, controlPlaneService) {
       <p>Cloudflare API Hostname: <code>${escapeHtml(topology.data.cloudflare.apiHostname || "not configured")}</code></p>
       <p>Queue Running/Pending/History: <code>${status.running}</code> / <code>${status.pendingCount}</code> / <code>${status.historyCount}</code></p>
     </section>
+    ${renderNavigationObservabilityShortcuts()}
+    ${renderOrchestratorObservabilityMap()}
     <div class="grid">
       <section>
         <h2>Topology</h2>
@@ -211,6 +213,36 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
+}
+
+function renderNavigationObservabilityShortcuts() {
+  return `
+    <section>
+      <h2>Navigation Observability Shortcuts</h2>
+      <ul>
+        <li><a href="/health">Health endpoint</a></li>
+        <li><a href="/panel">Dashboard home</a></li>
+        <li><a href="/api/task/queue">Task queue status</a></li>
+        <li><a href="/api/topology/status">Topology status</a></li>
+        <li><a href="/api/providers/status">Provider health status</a></li>
+        <li><a href="/api/providers/models">Approved model aliases</a></li>
+      </ul>
+      <p>Task detail links are available from Recent Task History when local task records exist.</p>
+      <p>No workflow action, timeline, or control routes are linked from this dashboard-only release.</p>
+    </section>`;
+}
+
+function renderOrchestratorObservabilityMap() {
+  return `
+    <section>
+      <h2>Orchestrator Observability Map</h2>
+      <ul>
+        <li>Codex / local execution boundary: local panel and mock task controls stay inside this service.</li>
+        <li>9Router / model ingress boundary: model ingress remains represented by existing provider and topology status.</li>
+        <li>Task service / routing observability boundary: task queue, provider health, and approved aliases are read-only entry points here.</li>
+        <li>Execution safety boundary: this section adds no API, no external dependency, no credential display, and no automatic execution path.</li>
+      </ul>
+    </section>`;
 }
 
 function renderBadge(status) {
