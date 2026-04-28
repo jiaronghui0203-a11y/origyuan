@@ -1,0 +1,339 @@
+[
+  {
+    "agentId": "jiajing",
+    "defaultModel": "chongzhen/gpt-5.4",
+    "resolvedDefault": "chongzhen/gpt-5.4",
+    "fallbacks": [
+      "customer-claude-sonnet-4-6/claude-opus-4-6",
+      "openai-codex/gpt-5.4",
+      "chongzhen/gpt-5.4"
+    ],
+    "allowed": [
+      "openai-codex/gpt-5.4",
+      "openrouter/auto",
+      "customer-claude-sonnet-4-6/claude-opus-4-6",
+      "custom-oneapi-usa/claude-sonnet-4-6",
+      "yongle-oneapi-anthropic/claude-sonnet-4-6",
+      "yongle-oneapi-anthropic/claude-opus-4-6",
+      "chenghua/gpt-5.4",
+      "chongzhen/gpt-5.4",
+      "tianqi/claude-sonnet-4-6"
+    ],
+    "providersWithOAuth": [
+      "openai-codex (3)",
+      "openrouter (1)"
+    ],
+    "missingProvidersInUse": [],
+    "oauthProviders": [
+      {
+        "provider": "jiajing",
+        "status": "static",
+        "profiles": [
+          "jiajing:default"
+        ]
+      },
+      {
+        "provider": "openai-codex",
+        "status": "expired",
+        "profiles": [
+          "openai-codex:default",
+          "openai-codex:jiaronghui0203@gmail.com",
+          "openai-codex:jrh990203@gmail.com (jrh990203@gmail.com)"
+        ]
+      },
+      {
+        "provider": "openrouter",
+        "status": "ok",
+        "profiles": [
+          "openrouter:default"
+        ]
+      }
+    ],
+    "storePath": "/root/.openclaw/agents/jiajing/agent/auth-profiles.json"
+  },
+  {
+    "agentId": "tianqi",
+    "defaultModel": "chongzhen/gpt-5.4",
+    "resolvedDefault": "chongzhen/gpt-5.4",
+    "fallbacks": [
+      "customer-claude-sonnet-4-6/claude-opus-4-6",
+      "openai-codex/gpt-5.4"
+    ],
+    "allowed": [
+      "openai-codex/gpt-5.4",
+      "openrouter/auto",
+      "customer-claude-sonnet-4-6/claude-opus-4-6",
+      "custom-oneapi-usa/claude-sonnet-4-6",
+      "yongle-oneapi-anthropic/claude-sonnet-4-6",
+      "yongle-oneapi-anthropic/claude-opus-4-6",
+      "chenghua/gpt-5.4",
+      "chongzhen/gpt-5.4",
+      "tianqi/claude-sonnet-4-6"
+    ],
+    "providersWithOAuth": [
+      "openai-codex (3)"
+    ],
+    "missingProvidersInUse": [],
+    "oauthProviders": [
+      {
+        "provider": "openai-codex",
+        "status": "expired",
+        "profiles": [
+          "openai-codex:default",
+          "openai-codex:jiaronghui0203@gmail.com",
+          "openai-codex:jrh990203@gmail.com (jrh990203@gmail.com)"
+        ]
+      },
+      {
+        "provider": "openrouter",
+        "status": "static",
+        "profiles": [
+          "openrouter:default",
+          "openrouter:tianqi-29fb87a018f4"
+        ]
+      },
+      {
+        "provider": "tianqi",
+        "status": "static",
+        "profiles": [
+          "tianqi:default"
+        ]
+      }
+    ],
+    "storePath": "/root/.openclaw/agents/tianqi/agent/auth-profiles.json"
+  },
+  {
+    "agentId": "wanli",
+    "defaultModel": "chongzhen/gpt-5.4",
+    "resolvedDefault": "chongzhen/gpt-5.4",
+    "fallbacks": [
+      "customer-claude-sonnet-4-6/claude-opus-4-6",
+      "openai-codex/gpt-5.4"
+    ],
+    "allowed": [
+      "openai-codex/gpt-5.4",
+      "openrouter/auto",
+      "customer-claude-sonnet-4-6/claude-opus-4-6",
+      "custom-oneapi-usa/claude-sonnet-4-6",
+      "yongle-oneapi-anthropic/claude-sonnet-4-6",
+      "yongle-oneapi-anthropic/claude-opus-4-6",
+      "chenghua/gpt-5.4",
+      "chongzhen/gpt-5.4",
+      "tianqi/claude-sonnet-4-6"
+    ],
+    "providersWithOAuth": [
+      "openai-codex (3)",
+      "openrouter (1)"
+    ],
+    "missingProvidersInUse": [],
+    "oauthProviders": [
+      {
+        "provider": "openai-codex",
+        "status": "expired",
+        "profiles": [
+          "openai-codex:default",
+          "openai-codex:jiaronghui0203@gmail.com",
+          "openai-codex:jrh990203@gmail.com (jrh990203@gmail.com)"
+        ]
+      },
+      {
+        "provider": "openrouter",
+        "status": "ok",
+        "profiles": [
+          "openrouter:default",
+          "openrouter:wanli-2738e01e7ec1543"
+        ]
+      },
+      {
+        "provider": "wanli",
+        "status": "static",
+        "profiles": [
+          "wanli:default"
+        ]
+      }
+    ],
+    "storePath": "/root/.openclaw/agents/wanli/agent/auth-profiles.json"
+  },
+  {
+    "agentId": "chenghua",
+    "defaultModel": "chongzhen/gpt-5.4",
+    "resolvedDefault": "chongzhen/gpt-5.4",
+    "fallbacks": [
+      "customer-claude-sonnet-4-6/claude-opus-4-6",
+      "openai-codex/gpt-5.4"
+    ],
+    "allowed": [
+      "openai-codex/gpt-5.4",
+      "openrouter/auto",
+      "customer-claude-sonnet-4-6/claude-opus-4-6",
+      "custom-oneapi-usa/claude-sonnet-4-6",
+      "yongle-oneapi-anthropic/claude-sonnet-4-6",
+      "yongle-oneapi-anthropic/claude-opus-4-6",
+      "chenghua/gpt-5.4",
+      "chongzhen/gpt-5.4",
+      "tianqi/claude-sonnet-4-6"
+    ],
+    "providersWithOAuth": [
+      "openai-codex (3)"
+    ],
+    "missingProvidersInUse": [],
+    "oauthProviders": [
+      {
+        "provider": "chenghua",
+        "status": "static",
+        "profiles": [
+          "chenghua:default"
+        ]
+      },
+      {
+        "provider": "openai-codex",
+        "status": "expired",
+        "profiles": [
+          "openai-codex:default",
+          "openai-codex:jiaronghui0203@gmail.com",
+          "openai-codex:jrh990203@gmail.com (jrh990203@gmail.com)"
+        ]
+      },
+      {
+        "provider": "openrouter",
+        "status": "static",
+        "profiles": [
+          "openrouter:default"
+        ]
+      }
+    ],
+    "storePath": "/root/.openclaw/agents/chenghua/agent/auth-profiles.json"
+  },
+  {
+    "agentId": "yongle",
+    "defaultModel": "chongzhen/gpt-5.4",
+    "resolvedDefault": "chongzhen/gpt-5.4",
+    "fallbacks": [
+      "customer-claude-sonnet-4-6/claude-opus-4-6",
+      "openai-codex/gpt-5.4"
+    ],
+    "allowed": [
+      "openai-codex/gpt-5.4",
+      "openrouter/auto",
+      "customer-claude-sonnet-4-6/claude-opus-4-6",
+      "custom-oneapi-usa/claude-sonnet-4-6",
+      "yongle-oneapi-anthropic/claude-sonnet-4-6",
+      "yongle-oneapi-anthropic/claude-opus-4-6",
+      "chenghua/gpt-5.4",
+      "chongzhen/gpt-5.4",
+      "tianqi/claude-sonnet-4-6"
+    ],
+    "providersWithOAuth": [
+      "openai-codex (3)",
+      "openrouter (1)"
+    ],
+    "missingProvidersInUse": [],
+    "oauthProviders": [
+      {
+        "provider": "openai-codex",
+        "status": "expired",
+        "profiles": [
+          "openai-codex:default",
+          "openai-codex:jiaronghui0203@gmail.com",
+          "openai-codex:jrh990203@gmail.com (jrh990203@gmail.com)"
+        ]
+      },
+      {
+        "provider": "openrouter",
+        "status": "ok",
+        "profiles": [
+          "openrouter:default"
+        ]
+      }
+    ],
+    "storePath": "/root/.openclaw/agents/yongle/agent/auth-profiles.json"
+  },
+  {
+    "agentId": "chongzhen",
+    "defaultModel": "chongzhen/gpt-5.4",
+    "resolvedDefault": "chongzhen/gpt-5.4",
+    "fallbacks": [
+      "customer-claude-sonnet-4-6/claude-opus-4-6",
+      "openai-codex/gpt-5.4"
+    ],
+    "allowed": [
+      "openai-codex/gpt-5.4",
+      "openrouter/auto",
+      "customer-claude-sonnet-4-6/claude-opus-4-6",
+      "custom-oneapi-usa/claude-sonnet-4-6",
+      "yongle-oneapi-anthropic/claude-sonnet-4-6",
+      "yongle-oneapi-anthropic/claude-opus-4-6",
+      "chenghua/gpt-5.4",
+      "chongzhen/gpt-5.4",
+      "tianqi/claude-sonnet-4-6"
+    ],
+    "providersWithOAuth": [
+      "openai-codex (3)",
+      "openrouter (1)"
+    ],
+    "missingProvidersInUse": [],
+    "oauthProviders": [
+      {
+        "provider": "openai-codex",
+        "status": "expired",
+        "profiles": [
+          "openai-codex:default",
+          "openai-codex:jiaronghui0203@gmail.com",
+          "openai-codex:jrh990203@gmail.com (jrh990203@gmail.com)"
+        ]
+      },
+      {
+        "provider": "openrouter",
+        "status": "ok",
+        "profiles": [
+          "openrouter:default"
+        ]
+      }
+    ],
+    "storePath": "/root/.openclaw/agents/chongzhen/agent/auth-profiles.json"
+  },
+  {
+    "agentId": "xuande",
+    "defaultModel": "chongzhen/gpt-5.4",
+    "resolvedDefault": "chongzhen/gpt-5.4",
+    "fallbacks": [
+      "customer-claude-sonnet-4-6/claude-opus-4-6",
+      "openai-codex/gpt-5.4"
+    ],
+    "allowed": [
+      "openai-codex/gpt-5.4",
+      "openrouter/auto",
+      "customer-claude-sonnet-4-6/claude-opus-4-6",
+      "custom-oneapi-usa/claude-sonnet-4-6",
+      "yongle-oneapi-anthropic/claude-sonnet-4-6",
+      "yongle-oneapi-anthropic/claude-opus-4-6",
+      "chenghua/gpt-5.4",
+      "chongzhen/gpt-5.4",
+      "tianqi/claude-sonnet-4-6"
+    ],
+    "providersWithOAuth": [
+      "openai-codex (3)",
+      "openrouter (1)"
+    ],
+    "missingProvidersInUse": [],
+    "oauthProviders": [
+      {
+        "provider": "openai-codex",
+        "status": "expired",
+        "profiles": [
+          "openai-codex:default",
+          "openai-codex:jiaronghui0203@gmail.com",
+          "openai-codex:jrh990203@gmail.com (jrh990203@gmail.com)"
+        ]
+      },
+      {
+        "provider": "openrouter",
+        "status": "ok",
+        "profiles": [
+          "openrouter:default"
+        ]
+      }
+    ],
+    "storePath": "/root/.openclaw/agents/xuande/agent/auth-profiles.json"
+  }
+]

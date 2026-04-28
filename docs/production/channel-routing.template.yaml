@@ -1,0 +1,116 @@
+# Template only.
+# Fill route ids, bot ids, account ids, and chat ids from the live environment.
+
+meta:
+  name: channel-routing-template
+  status: template
+  updated_at: 2026-04-22
+
+globals:
+  shared_artifact_root: /root/.openclaw/workspace-shared/runs
+  required_metadata:
+    - channel_message_id
+    - paperclip_issue_id
+    - run_id
+    - artifact_path
+  response_policy:
+    reply_to_origin_channel: true
+    specialist_bots_cannot_speak_externally: true
+
+feishu:
+  enabled: true
+  primary_router_agent: hongwu
+  keep_existing_routes_unchanged: true
+  accounts:
+    - account_id: <feishu-account-id>
+      purpose: primary_gateway_account
+  routes:
+    - route_id: <feishu-main-group-route-id>
+      source_type: group
+      source_name: 归元天工
+      router_agent: hongwu
+      priority: primary
+      policies:
+        - allow_daily_work
+        - allow_long_report_doc_link
+        - leave_group_trace_on_failure_timeout_budget
+    - route_id: <feishu-owner-dm-route-id>
+      source_type: dm
+      source_name: owner_private_chat
+      router_agent: hongwu
+      priority: primary
+      policies:
+        - allow_direct_owner_requests
+        - allow_direct_summary_return
+
+telegram:
+  enabled: true
+  secondary_router_agent: xiaoyuan
+  rollout_mode: incremental_only
+  accounts:
+    - account_id: <telegram-bot-account-id>
+      purpose: alert_and_mobile_approval
+  routes:
+    - route_id: <telegram-owner-dm-route-id>
+      source_type: dm
+      source_name: owner_private_chat
+      router_agent: xiaoyuan
+      policies:
+        - approval_request
+        - mobile_status_return
+        - urgent_incident_notification
+    - route_id: <telegram-alert-group-route-id>
+      source_type: group
+      source_name: alert_group
+      router_agent: xiaoyuan
+      policies:
+        - incident_broadcast
+        - budget_alert
+        - timeout_alert
+
+approval_flow:
+  initiator_agent: xiaoyuan
+  approval_targets:
+    - owner_private_chat_feishu
+    - owner_private_chat_telegram
+  required_for_permissions:
+    - shell
+    - ssh
+    - service.restart
+    - file.delete
+    - rollback
+  executor_agent: chongzhen
+  final_writeback_agent: hongwu
+
+dispatch_rules:
+  direct_dispatch:
+    match:
+      - simple_qa
+      - single_tool
+      - single_specialist_bot
+    action: dispatch_directly
+  paperclip_dispatch:
+    match:
+      - multi_step
+      - cross_bot
+      - long_running
+      - budget_sensitive
+      - approval_required
+    action: create_paperclip_issue
+
+return_rules:
+  feishu:
+    short_result: inline_reply
+    long_result: feishu_doc_link_plus_summary
+    failure: group_trace
+  telegram:
+    short_result: inline_reply
+    long_result: summary_plus_link
+    failure: owner_direct_alert
+
+placeholders_to_fill:
+  - feishu account_id, route_id, chat_id
+  - telegram account_id, route_id, chat_id
+  - paperclip project id and queue id
+  - approval callback endpoint or adapter binding
+  - feishu doc publish binding

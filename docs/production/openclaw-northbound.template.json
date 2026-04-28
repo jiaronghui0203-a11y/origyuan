@@ -1,0 +1,28 @@
+{
+  "models": {
+    "providers": {
+      "north": {
+        "baseUrl": "https://api.<your-domain>/v1",
+        "apiKey": "sk_openclaw_prod",
+        "api": "openai-completions",
+        "models": [
+          { "id": "team/gpt-5-codex", "name": "Team Codex Pool" },
+          { "id": "team/claude-sonnet", "name": "Team Claude Pool" },
+          { "id": "team/gemini-pro", "name": "Team Gemini Pool" },
+          { "id": "backup/payg", "name": "Paid Backup Pool" }
+        ]
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "north/team/gpt-5-codex",
+        "fallbacks": [
+          "north/team/claude-sonnet",
+          "north/backup/payg"
+        ]
+      }
+    }
+  }
+}
