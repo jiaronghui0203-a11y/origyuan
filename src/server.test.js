@@ -353,6 +353,36 @@ test("GET /api/task/queue returns queue status", async () => {
   });
 });
 
+test("dashboard exposes sanitized read-only observability shortcuts", async () => {
+  const server = createServer(testConfig());
+  await usingServer(server, async (baseUrl) => {
+    const response = await fetch(`${baseUrl}/panel`);
+    const html = await response.text();
+
+    assert.equal(response.status, 200);
+    assert.match(html, /Navigation Observability Shortcuts/);
+    assert.match(html, /Orchestrator Observability Map/);
+    assert.match(html, /\/health/);
+    assert.match(html, /\/panel/);
+    assert.match(html, /\/api\/task\/queue/);
+    assert.match(html, /\/api\/topology\/status/);
+    assert.match(html, /\/api\/providers\/status/);
+
+    const shortcutsHtml = html.match(/<h2>Navigation Observability Shortcuts<\/h2>[\s\S]*?<\/section>/)?.[0] || "";
+    const mapHtml = html.match(/<h2>Orchestrator Observability Map<\/h2>[\s\S]*?<\/section>/)?.[0] || "";
+
+    assert.doesNotMatch(shortcutsHtml, /<form/i);
+    assert.doesNotMatch(shortcutsHtml, /<button/i);
+    assert.doesNotMatch(mapHtml, /<form/i);
+    assert.doesNotMatch(mapHtml, /<button/i);
+    assert.doesNotMatch(html, />\s*Approve\s*<\/button>/i);
+    assert.doesNotMatch(html, />\s*Reject\s*<\/button>/i);
+    assert.doesNotMatch(html, />\s*Resume\s*<\/button>/i);
+    assert.doesNotMatch(html, /\/panel\/workflows\/[^"' <]+\/actions\/[^"' <]+/);
+    assert.doesNotMatch(html, /\/panel\/workflows\/[^"' <]+\/timeline/);
+  });
+});
+
 test("mock failure task retries three times and is visible in detail", async () => {
   const server = createServer(testConfig());
   await usingServer(server, async (baseUrl) => {
