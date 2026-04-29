@@ -80,6 +80,7 @@ export function createDashboardRoutes(queueService, controlPlaneService) {
     </section>
     ${renderNavigationObservabilityShortcuts()}
     ${renderOrchestratorObservabilityMap()}
+    ${renderReleaseHygiene()}
     <div class="grid">
       <section>
         <h2>Topology</h2>
@@ -241,6 +242,20 @@ function renderOrchestratorObservabilityMap() {
         <li>9Router / model ingress boundary: model ingress remains represented by existing provider and topology status.</li>
         <li>Task service / routing observability boundary: task queue, provider health, and approved aliases are read-only entry points here.</li>
         <li>Execution safety boundary: this section adds no API, no external dependency, no credential display, and no automatic execution path.</li>
+      </ul>
+    </section>`;
+}
+
+function renderReleaseHygiene() {
+  return `
+    <section>
+      <h2>Release Hygiene</h2>
+      <ul>
+        <li>Current branch should be a release/* branch</li>
+        <li>Keep feature-branch protected from direct push</li>
+        <li>Prefer small scoped PRs</li>
+        <li>Avoid provider / gateway / execution-chain changes in observability-only releases</li>
+        <li>Verify tests and diff check before PR</li>
       </ul>
     </section>`;
 }

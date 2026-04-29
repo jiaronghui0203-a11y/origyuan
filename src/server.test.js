@@ -362,6 +362,9 @@ test("dashboard exposes sanitized read-only observability shortcuts", async () =
     assert.equal(response.status, 200);
     assert.match(html, /Navigation Observability Shortcuts/);
     assert.match(html, /Orchestrator Observability Map/);
+    assert.match(html, /Release Hygiene/);
+    assert.match(html, /Keep feature-branch protected from direct push/);
+    assert.match(html, /Prefer small scoped PRs/);
     assert.match(html, /\/health/);
     assert.match(html, /\/panel/);
     assert.match(html, /\/api\/task\/queue/);
@@ -370,14 +373,22 @@ test("dashboard exposes sanitized read-only observability shortcuts", async () =
 
     const shortcutsHtml = html.match(/<h2>Navigation Observability Shortcuts<\/h2>[\s\S]*?<\/section>/)?.[0] || "";
     const mapHtml = html.match(/<h2>Orchestrator Observability Map<\/h2>[\s\S]*?<\/section>/)?.[0] || "";
+    const releaseHygieneHtml = html.match(/<h2>Release Hygiene<\/h2>[\s\S]*?<\/section>/)?.[0] || "";
 
     assert.doesNotMatch(shortcutsHtml, /<form/i);
     assert.doesNotMatch(shortcutsHtml, /<button/i);
     assert.doesNotMatch(mapHtml, /<form/i);
     assert.doesNotMatch(mapHtml, /<button/i);
+    assert.doesNotMatch(releaseHygieneHtml, /<form/i);
+    assert.doesNotMatch(releaseHygieneHtml, /<button/i);
     assert.doesNotMatch(html, />\s*Approve\s*<\/button>/i);
     assert.doesNotMatch(html, />\s*Reject\s*<\/button>/i);
     assert.doesNotMatch(html, />\s*Resume\s*<\/button>/i);
+    assert.doesNotMatch(html, />\s*approve\s*<\/button>/i);
+    assert.doesNotMatch(html, />\s*reject\s*<\/button>/i);
+    assert.doesNotMatch(html, />\s*resume\s*<\/button>/i);
+    assert.doesNotMatch(html, /\/panel\/workflows\/:workflowId\/actions\/:actionId/);
+    assert.doesNotMatch(html, /\/panel\/workflows\/:workflowId\/timeline/);
     assert.doesNotMatch(html, /\/panel\/workflows\/[^"' <]+\/actions\/[^"' <]+/);
     assert.doesNotMatch(html, /\/panel\/workflows\/[^"' <]+\/timeline/);
   });
